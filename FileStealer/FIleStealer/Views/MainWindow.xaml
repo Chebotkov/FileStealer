@@ -1,11 +1,14 @@
-﻿<Window x:Class="FIleStealer.MainWindow"
+﻿<Window x:Class="FIleStealer.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FIleStealer"
+        xmlns:vm="clr-namespace:FIleStealer.ViewModels"
         mc:Ignorable="d"
-        Title="Data stealer" Height="600" Width="600">
+        Title="Data stealer" Height="600" Width="600" WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <vm:SelectedDriveVM></vm:SelectedDriveVM>
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.3*"></RowDefinition>
@@ -23,7 +26,20 @@
         <GroupBox Grid.Row="0" Grid.Column="0" >
             <GroupBox.Header>Choose your USB:</GroupBox.Header>
             <StackPanel >
-                <ComboBox HorizontalAlignment="Stretch"></ComboBox>
+                <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableRemovableDrivesList, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding AvailableRemovableDrive, UpdateSourceTrigger=PropertyChanged}"  >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                                    <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Path=Name}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Path=VolumeLabel}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </StackPanel>
         </GroupBox>
 
@@ -31,7 +47,19 @@
             <GroupBox.Header>Available drives.</GroupBox.Header>
             <Grid>
                 <ScrollViewer>
-                    <ListBox>
+                    <ListBox ItemsSource="{Binding AvalableDrivesList, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding AvailableDrive, UpdateSourceTrigger=PropertyChanged}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                                        <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Path=Name}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Path=VolumeLabel}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
                     </ListBox>
                 </ScrollViewer>
             </Grid>
@@ -41,7 +69,19 @@
             <GroupBox.Header>Selected drives.</GroupBox.Header>
             <Grid>
                 <ScrollViewer>
-                    <ListBox>
+                    <ListBox ItemsSource="{Binding SelectedDrivesList, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedDrive, UpdateSourceTrigger=PropertyChanged}">>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                                        <ColumnDefinition Width="0.5*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Path=Name}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Path=VolumeLabel}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
                     </ListBox>
                 </ScrollViewer>
             </Grid>
@@ -52,8 +92,8 @@
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Margin="10 20">Add</Button>
-            <Button Grid.Row="1" Margin="10 20">Remove</Button>
+            <Button Grid.Row="0" Margin="10 20" Command="{Binding AddCommand}" CommandParameter="{Binding AvailableDrive}">Add</Button>
+            <Button Grid.Row="1" Margin="10 20" Command="{Binding RemoveCommand}" CommandParameter="{Binding SelectedDrive}">Remove</Button>
         </Grid>
 
         <Grid Grid.Row="1" Grid.ColumnSpan="4">

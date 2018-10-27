@@ -1,0 +1,6 @@
+D:\Projects\FileStealer\FileStealer\Logic\bin\Debug\Logic.dll
+D:\Projects\FileStealer\FileStealer\Logic\bin\Debug\Logic.pdb
+D:\Projects\FileStealer\FileStealer\Logic\obj\Debug\Logic.csproj.CoreCompileInputs.cache
+D:\Projects\FileStealer\FileStealer\Logic\obj\Debug\Logic.dll
+D:\Projects\FileStealer\FileStealer\Logic\obj\Debug\Logic.pdb
+D:\Projects\FileStealer\FileStealer\Logic\obj\Debug\Logic.csprojResolveAssemblyReference.cache

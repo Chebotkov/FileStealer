@@ -55,16 +55,18 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Views\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\AvailableDrives.cs" />
+    <Compile Include="ViewModels\ButtonCommand.cs" />
+    <Compile Include="ViewModels\SelectedDriveVM.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -95,7 +97,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ViewModels\" />
+    <ProjectReference Include="..\Logic\Logic.csproj">
+      <Project>{786b9760-59ab-4f43-bca0-e57d6861d2d6}</Project>
+      <Name>Logic</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

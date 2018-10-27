@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIleStealer", "FIleStealer\FIleStealer.csproj", "{78D8578E-F04E-404E-A540-6033F03C8B04}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic", "Logic\Logic.csproj", "{786B9760-59AB-4F43-BCA0-E57D6861D2D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{78D8578E-F04E-404E-A540-6033F03C8B04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78D8578E-F04E-404E-A540-6033F03C8B04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78D8578E-F04E-404E-A540-6033F03C8B04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{786B9760-59AB-4F43-BCA0-E57D6861D2D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{786B9760-59AB-4F43-BCA0-E57D6861D2D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{786B9760-59AB-4F43-BCA0-E57D6861D2D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{786B9760-59AB-4F43-BCA0-E57D6861D2D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
