@@ -1,0 +1,5 @@
+D:\Projects\FileStealer\FileStealer\Logic\bin\Release\Logic.dll
+D:\Projects\FileStealer\FileStealer\Logic\bin\Release\Logic.pdb
+D:\Projects\FileStealer\FileStealer\Logic\obj\Release\Logic.csproj.CoreCompileInputs.cache
+D:\Projects\FileStealer\FileStealer\Logic\obj\Release\Logic.dll
+D:\Projects\FileStealer\FileStealer\Logic\obj\Release\Logic.pdb

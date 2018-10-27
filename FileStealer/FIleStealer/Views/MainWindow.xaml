@@ -47,7 +47,7 @@
             <GroupBox.Header>Available drives.</GroupBox.Header>
             <Grid>
                 <ScrollViewer>
-                    <ListBox ItemsSource="{Binding AvalableDrivesList, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding AvailableDrive, UpdateSourceTrigger=PropertyChanged}">
+                    <ListBox ItemsSource="{Binding AvailableDrivesList, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding AvailableDrive, UpdateSourceTrigger=PropertyChanged}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -69,7 +69,7 @@
             <GroupBox.Header>Selected drives.</GroupBox.Header>
             <Grid>
                 <ScrollViewer>
-                    <ListBox ItemsSource="{Binding SelectedDrivesList, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedDrive, UpdateSourceTrigger=PropertyChanged}">>
+                    <ListBox ItemsSource="{Binding SelectedDrivesList, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedDrive, UpdateSourceTrigger=PropertyChanged}" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -101,12 +101,12 @@
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Margin="15, 10">Start scanning</Button>
+            <Button Grid.Column="0" Margin="15, 10" Command="{Binding StartScanning}">Start scanning</Button>
             <Button Grid.Column="1" Margin="15, 10">Stop</Button>
         </Grid>
 
         <GroupBox Grid.Row="2" Grid.ColumnSpan="4">
-            <GroupBox.Header>List Of checked files.</GroupBox.Header>
+            <GroupBox.Header>Founded and copied files.</GroupBox.Header>
             <Grid>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                     <ListBox Name="ScannedFilesNames"></ListBox>

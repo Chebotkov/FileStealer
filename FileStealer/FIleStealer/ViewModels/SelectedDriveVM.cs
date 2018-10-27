@@ -16,13 +16,22 @@ namespace FIleStealer.ViewModels
         private DriveInfo selectedDrive;
         private DriveInfo availableDrive;
         private DriveInfo availableRemovableDrive;
-        
+
         public ObservableCollection<DriveInfo> AvailableDrivesList { get; set; }
         public ObservableCollection<DriveInfo> SelectedDrivesList { get; set; }
         public ObservableCollection<DriveInfo> AvailableRemovableDrivesList { get; set; }
 
+        public SelectedDriveVM()
+        {
+            AvailableDrivesList = Manager.GetListOfDrivers();
+            SelectedDrivesList = new ObservableCollection<DriveInfo>();
+            AvailableRemovableDrivesList = Manager.GetListOfRemovableDrivers();
+        }
+
+        #region Commands
         private ButtonCommand addCommand;
         private ButtonCommand removeCommand;
+        private ButtonCommand startCommand;
         public ButtonCommand AddCommand
         {
             get
@@ -33,13 +42,16 @@ namespace FIleStealer.ViewModels
                       DriveInfo drive = obj as DriveInfo;
                       if (drive != null)
                       {
-                          SelectedDrivesList.Add(drive);
+                          if (!SelectedDrivesList.Contains(drive))
+                          {
+                              SelectedDrivesList.Add(drive);
+                          }
                       }
-                      SelectedDrive = drive; 
+                      SelectedDrive = drive;
                   }));
             }
         }
-        
+
         public ButtonCommand RemoveCommand
         {
             get
@@ -58,6 +70,27 @@ namespace FIleStealer.ViewModels
             }
         }
 
+        public ButtonCommand StartScanning
+        {
+            get
+            {
+                return startCommand ??
+                  (startCommand = new ButtonCommand(obj =>
+                  {
+                      Stealer stealer = new Stealer(AvailableRemovableDrive, SelectedDrivesList.ToArray(), WriteInfo);
+                  }, 
+                  (obj) =>
+                  {
+                      if (AvailableRemovableDrive is null) return false;
+                      if (SelectedDrivesList.Count == 0) return false;
+                      return true;
+                  }
+                  ));
+            }
+        }
+        #endregion
+
+        #region Properties
         public DriveInfo SelectedDrive
         {
             get { return selectedDrive; }
@@ -86,19 +119,22 @@ namespace FIleStealer.ViewModels
                 OnPropertyChanged("AvailableRemovableDrive");
             }
         }
+        #endregion
 
-        public SelectedDriveVM()
-        {
-            AvailableDrivesList = Manager.GetListOfDrivers();
-            SelectedDrivesList = new ObservableCollection<DriveInfo>();
-            AvailableRemovableDrivesList = Manager.GetListOfRemovableDrivers();
-        }
-
+        #region Interface implementation
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged([CallerMemberName]string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
+        #endregion
+
+        #region Necessary method
+        public void WriteInfo(string info)
+        {
+
+        }
+        #endregion
     }
 }
