@@ -1,0 +1,50 @@
+﻿<Window x:Class="FIleStealer.Views.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FIleStealer.Views"
+        mc:Ignorable="d"
+        Title="Settings" Height="300" Width="300" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.7*"></RowDefinition>
+            <RowDefinition Height="0.3*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.7*"></ColumnDefinition>
+            <ColumnDefinition Width="0.3*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Grid.Row="0" Grid.Column="0">
+            <GroupBox.Header>Set Extensions</GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.7*"></RowDefinition>
+                    <RowDefinition Height="0.3*"></RowDefinition>
+                    <RowDefinition Height="0.2*"></RowDefinition>
+                    <RowDefinition Height="0.3*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
+                    <Label Target="{Binding ElementName=Extensions}">Available extensions</Label>
+                    <ScrollViewer Margin="0 0 0 -50">
+                        <ListBox Name="Extensions">
+                            <ListBox.ToolTip>
+                                <ToolTip>Extension must started with "."</ToolTip>
+                            </ListBox.ToolTip>
+                        </ListBox>
+                    </ScrollViewer>
+                </StackPanel>
+
+                <Button Grid.Row="1" Grid.Column="1" Margin="10,5,10,5">Remove</Button>
+                <Label Grid.Row="2" Grid.ColumnSpan="2" Target="{Binding ElementName=TextblockForNewExtension}" Margin="0,0,0,26" Grid.RowSpan="2">Add new extension:</Label>
+                <TextBox Grid.Row="3" Grid.Column="0" Name="TextblockForNewExtension" Margin="0,10,0,10"></TextBox>
+                <Button Grid.Row="3" Grid.Column="1" Margin="10,5,10,5">Add</Button>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>

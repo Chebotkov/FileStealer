@@ -9,8 +9,11 @@
     <Window.DataContext>
         <vm:SelectedDriveVM></vm:SelectedDriveVM>
     </Window.DataContext>
+
     <Grid>
+
         <Grid.RowDefinitions>
+            <RowDefinition Height="0.04*"></RowDefinition>
             <RowDefinition Height="0.3*"></RowDefinition>
             <RowDefinition Height="0.1*"></RowDefinition>
             <RowDefinition Height="0.4*"></RowDefinition>
@@ -23,14 +26,20 @@
             <ColumnDefinition Width="0.4*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Row="0" Grid.Column="0" >
+        <Menu Height="25" VerticalAlignment="Top" Grid.Row="0" Grid.ColumnSpan="4">
+            <MenuItem Header="File">
+                <MenuItem Header="Settings" Click="Settings_Click"></MenuItem>
+            </MenuItem>
+        </Menu>
+        
+        <GroupBox Grid.Row="1" Grid.Column="0" >
             <GroupBox.Header>Choose your USB:</GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0.8*"></RowDefinition>
                     <RowDefinition Height="0.2*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <ComboBox Grid.Row="0" HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableRemovableDrivesList, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding AvailableRemovableDrive}" Margin="0,10,0,71"  >
+                <ComboBox Grid.Row="0" HorizontalAlignment="Stretch" ItemsSource="{Binding AvailableRemovableDrivesList, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding AvailableRemovableDrive}" Margin="0,10,0,68"  >
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -45,11 +54,11 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
 
-                <Button Grid.Row="1" Command="{Binding RefreshCommand}" >Refresh</Button>
+                <Button Grid.Row="2" Command="{Binding RefreshCommand}" >Refresh</Button>
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Column="1" Grid.Row="0">
+        <GroupBox Grid.Column="1" Grid.Row="1">
             <GroupBox.Header>Available drives.</GroupBox.Header>
             <Grid>
                 <ScrollViewer>
@@ -71,7 +80,7 @@
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Column="3" Grid.Row="0">
+        <GroupBox Grid.Column="3" Grid.Row="1">
             <GroupBox.Header>Selected drives.</GroupBox.Header>
             <Grid>
                 <ScrollViewer>
@@ -93,7 +102,7 @@
             </Grid>
         </GroupBox>
 
-        <Grid Grid.Row="0" Grid.Column="2">
+        <Grid Grid.Row="1" Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition></RowDefinition>
                 <RowDefinition></RowDefinition>
@@ -102,7 +111,7 @@
             <Button Grid.Row="1" Margin="10 20" Command="{Binding RemoveCommand}" CommandParameter="{Binding SelectedDrive}">Remove</Button>
         </Grid>
 
-        <Grid Grid.Row="1" Grid.ColumnSpan="4">
+        <Grid Grid.Row="2" Grid.ColumnSpan="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
@@ -111,7 +120,7 @@
             <Button Grid.Column="1" Margin="15, 10" Command="{Binding StopCommand}">Stop</Button>
         </Grid>
 
-        <GroupBox Grid.Row="2" Grid.ColumnSpan="4">
+        <GroupBox Grid.Row="3" Grid.ColumnSpan="4">
             <GroupBox.Header>Founded and copied files.</GroupBox.Header>
             <Grid>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
@@ -120,9 +129,9 @@
             </Grid>
         </GroupBox>
 
-        <Button Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Margin="20,60,20,0" Height="52" VerticalAlignment="Top" Command="{Binding OpenFileCommand}" CommandParameter="{Binding ChosenFile}">Open</Button>
+        <Button Grid.Row="4" Grid.RowSpan="2" Grid.Column="3" Margin="20,60,20,0" Height="52" VerticalAlignment="Top" Command="{Binding OpenFileCommand}" CommandParameter="{Binding ChosenFile}">Open</Button>
 
-        <GroupBox Grid.Row="3" Grid.RowSpan="2" Grid.ColumnSpan="3">
+        <GroupBox Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="3">
             <GroupBox.Header>Process information</GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>
@@ -140,5 +149,6 @@
                 </StackPanel>
             </Grid>
         </GroupBox>
+        
     </Grid>
 </Window>

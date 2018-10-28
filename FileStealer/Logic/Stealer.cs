@@ -19,7 +19,7 @@ namespace Logic
         private StreamWriter streamWriter;
         private DriveInfo[] drives;
         private Action<string> WriteInformation;
-        private string[] Extensions = { ".jpg", ".jpeg", ".mp3" };
+        private string[] Extensions = { ".jpg", ".jpeg",};
         public EventHandler<CountFilesEventArgs> TotalCountFilesChanged;
         public EventHandler<CountFilesEventArgs> CountFilesChanged;
         public EventHandler<DriveInformationEventArgs> DriveChanged;
@@ -115,7 +115,13 @@ namespace Logic
                 streamWriter.Close();
             }
             catch (System.NullReferenceException) { }
-            catch (System.IO.IOException) { }; //"Out of memory... "
+            catch (System.IO.IOException)
+            {
+                if ((int)usbDrive.TotalSize - usbDrive.TotalFreeSpace < 1e+7)
+                {
+                    Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs("Not enough free space")));
+                }
+            }; //"Out of memory... "
         }
 
         private void Search(string path)

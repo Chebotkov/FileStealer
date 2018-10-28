@@ -16,3 +16,5 @@ D:\Projects\FileStealer\FileStealer\FIleStealer\bin\Debug\Logic.pdb
 D:\Projects\FileStealer\FileStealer\FIleStealer\obj\Debug\GeneratedInternalTypeHelper.g.cs
 D:\Projects\FileStealer\FileStealer\FIleStealer\obj\Debug\Views\MainWindow.g.cs
 D:\Projects\FileStealer\FileStealer\FIleStealer\obj\Debug\Views\MainWindow.baml
+D:\Projects\FileStealer\FileStealer\FIleStealer\obj\Debug\Views\Settings.g.cs
+D:\Projects\FileStealer\FileStealer\FIleStealer\obj\Debug\Views\Settings.baml
