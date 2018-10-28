@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -37,6 +38,21 @@ namespace Logic
             }
 
             return Drives;
+        }
+
+        public static void OpenFile(string pathToFile)
+        {
+            if (pathToFile is null)
+            {
+                throw new ArgumentNullException(String.Format("{0} is null"), nameof(pathToFile));
+            }
+
+            if (!File.Exists(pathToFile))
+            {
+                throw new FileNotFoundException(String.Format("File {0} doesn't exists."), pathToFile);
+            }
+
+            System.Diagnostics.Process.Start(pathToFile);
         }
     }
 }

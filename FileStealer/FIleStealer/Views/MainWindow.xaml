@@ -13,9 +13,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="0.3*"></RowDefinition>
             <RowDefinition Height="0.1*"></RowDefinition>
-            <RowDefinition Height="0.5*"></RowDefinition>
-            <RowDefinition Height="0.15*"></RowDefinition>
-            <RowDefinition Height="0.05*"></RowDefinition>
+            <RowDefinition Height="0.4*"></RowDefinition>
+            <RowDefinition Height="0.3*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.4*"></ColumnDefinition>
@@ -109,28 +108,30 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Margin="15, 10" Command="{Binding StartScanning}">Start scanning</Button>
-            <Button Grid.Column="1" Margin="15, 10">Stop</Button>
+            <Button Grid.Column="1" Margin="15, 10" Command="{Binding StopCommand}">Stop</Button>
         </Grid>
 
         <GroupBox Grid.Row="2" Grid.ColumnSpan="4">
             <GroupBox.Header>Founded and copied files.</GroupBox.Header>
             <Grid>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                    <ListBox ItemsSource="{Binding FoundedFiles}"></ListBox>
+                    <ListBox ItemsSource="{Binding FoundedFiles}" SelectedItem="{Binding ChosenFile}"></ListBox>
                 </ScrollViewer>
             </Grid>
         </GroupBox>
 
-        <Button Grid.Row="3" Grid.Column="3" Grid.RowSpan="2" Margin="20,25,20,25" Height="52" VerticalAlignment="Top">Open</Button>
+        <Button Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" Margin="20,60,20,0" Height="52" VerticalAlignment="Top" Command="{Binding OpenFileCommand}" CommandParameter="{Binding ChosenFile}">Open</Button>
 
         <GroupBox Grid.Row="3" Grid.RowSpan="2" Grid.ColumnSpan="3">
             <GroupBox.Header>Process information</GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0.9*"></RowDefinition>
-                    <RowDefinition Height="0.4*"></RowDefinition>
+                    <RowDefinition Height="0.2*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <ListBox Grid.Row="0" Margin="10,10,10,0" ItemsSource="{Binding ScanInfo}"></ListBox>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <ListBox Grid.Row="0" Margin="10,10,10,0" ItemsSource="{Binding ScanInfo}"></ListBox>
+                </ScrollViewer>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <Label Content="Files found:" Margin="10 0 5 0"/>
                     <TextBlock Text="{Binding CountFiles}" Margin="0 5 5 0"></TextBlock>

@@ -1,15 +1,10 @@
 ﻿using Logic;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace FIleStealer.ViewModels
 {
@@ -21,6 +16,8 @@ namespace FIleStealer.ViewModels
         private string chosenFile;
         private ulong countFiles;
         private ulong totalCountFiles;
+        private Stealer stealer;
+        private bool isScanning = false;
 
         public ObservableCollection<DriveInfo> AvailableDrivesList { get; set; }
         public ObservableCollection<DriveInfo> SelectedDrivesList { get; set; }
@@ -42,6 +39,8 @@ namespace FIleStealer.ViewModels
         private ButtonCommand removeCommand;
         private ButtonCommand startCommand;
         private ButtonCommand refreshCommand;
+        private ButtonCommand stopCommand;
+        private ButtonCommand openFileCommand;
 
         public ButtonCommand AddCommand
         {
@@ -88,7 +87,14 @@ namespace FIleStealer.ViewModels
                 return startCommand ??
                   (startCommand = new ButtonCommand(obj =>
                   {
-                      Stealer stealer = new Stealer(AvailableRemovableDrive, SelectedDrivesList.ToArray(), WriteInfo);
+                      //Clear all
+                      FoundedFiles.Clear();
+                      ScanInfo.Clear();
+                      CountFiles = 0;
+                      TotalCountFiles = 0;
+                      isScanning = true;
+
+                      stealer = new Stealer(AvailableRemovableDrive, SelectedDrivesList.ToArray(), WriteInfo);
                       stealer.DriveChanged += DriveInfoChanged;
                       stealer.CountFilesChanged += CountChanged;
                       stealer.TotalCountFilesChanged += TotalCountChanged;
@@ -98,7 +104,7 @@ namespace FIleStealer.ViewModels
                   {
                       if (AvailableRemovableDrive is null) return false;
                       if (SelectedDrivesList.Count == 0) return false;
-                      return true;
+                      return !isScanning;
                   }
                   ));
             }
@@ -117,6 +123,41 @@ namespace FIleStealer.ViewModels
                           AvailableRemovableDrivesList.Add(drive);
                       }
                   }));
+            }
+        }
+
+        public ButtonCommand StopCommand
+        {
+            get
+            {
+                return stopCommand ??
+                  (stopCommand = new ButtonCommand(obj =>
+                  {
+                      stealer.StopSteal();
+                      isScanning = false;
+                  },
+                  (obj) =>
+                  {
+                      return isScanning;
+                  }
+                  ));
+            }
+        }
+
+        public ButtonCommand OpenFileCommand
+        {
+            get
+            {
+                return openFileCommand ??
+                  (openFileCommand = new ButtonCommand(obj =>
+                  {
+                      Manager.OpenFile(obj.ToString());
+                  },
+                  (obj) =>
+                  {
+                      return !(ChosenFile is null);
+                  }
+                  ));
             }
         }
         #endregion

