@@ -17,6 +17,7 @@ namespace Logic
         private ulong count;
         private ulong totalCount = 0;
         private StreamWriter streamWriter;
+        private StreamWriter logWriter;
         private DriveInfo[] drives;
         private Action<string> WriteInformation;
         private string[] Extensions = { ".jpg", ".jpeg",};
@@ -85,6 +86,7 @@ namespace Logic
             }
 
             streamWriter = new StreamWriter(String.Format("{0}FilesList{1}.txt", usbDrive.Name, DateTime.Now.ToShortDateString()), false, System.Text.Encoding.Default);
+            logWriter = new StreamWriter(String.Format("{0}ErrosLog{1}.txt", usbDrive.Name, DateTime.Now.ToShortDateString()), false, System.Text.Encoding.Default);
             foreach (DriveInfo drive in drives)
             {
                 try
@@ -92,36 +94,51 @@ namespace Logic
                     bool success = false;
                     if (drive.IsReady)
                     {
-                        Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("Drive {0} {1} is checking", drive.Name, drive.VolumeLabel))));
-                        Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("About drive:\n\tDrive Format: {0}\n\tDrive Type: {1}\n\tTotal Size: {2}", drive.DriveFormat, drive.DriveType, drive.TotalSize))));
+                        SyncInfo(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("Drive {0} {1} is checking", drive.Name, drive.VolumeLabel))));
+                        SyncInfo(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("About drive:\n\tDrive Format: {0}\n\tDrive Type: {1}\n\tTotal Size: {2}", drive.DriveFormat, drive.DriveType, drive.TotalSize))));
                         
                         await Task.Run(() => Search(drive.Name), cancellationToken.Token);
-                        Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("Drive {0} is checked. Found {1} files\n", drive.Name, count))));
+                        SyncInfo(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs(String.Format("Drive {0} is checked. Found {1} files\n", drive.Name, count))));
                         count = 0;
                         success = true;
                     }
 
                     if (!success)
                     {
-                        Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs("Drive " + drive.Name + " is skiped. \nAbout drive:\n\tDrive Format: " + drive.DriveFormat + "\n\tDrive Type: " + drive.DriveType + "\n\tTotal Size: " + drive.TotalSize + "\n\tDrive status: " + (drive.IsReady ? "Ready" : "Isn't Ready"))));
+                        SyncInfo(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs("Drive " + drive.Name + " is skiped. \nAbout drive:\n\tDrive Format: " + drive.DriveFormat + "\n\tDrive Type: " + drive.DriveType + "\n\tTotal Size: " + drive.TotalSize + "\n\tDrive status: " + (drive.IsReady ? "Ready" : "Isn't Ready"))));
                     }
                 }
-                catch (System.IO.IOException) { }
-                catch (System.NullReferenceException) { }
+                catch (System.IO.IOException e)
+                {
+                    Log(e.Message);
+                }
+                catch (System.NullReferenceException e)
+                {
+                    Log(e.Message);
+                }
             }
 
             try
             {
                 streamWriter.Close();
-            }
-            catch (System.NullReferenceException) { }
-            catch (System.IO.IOException)
+            } 
+            catch (Exception e)
             {
                 if ((int)usbDrive.TotalSize - usbDrive.TotalFreeSpace < 1e+7)
                 {
-                    Application.Current.Dispatcher.Invoke(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs("Not enough free space")));
+                    SyncInfo(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs("Not enough free space")));
                 }
-            }; //"Out of memory... "
+
+                Log(e.Message);
+            } //"Out of memory... "
+
+            try
+            {
+                logWriter.Close();
+            }
+            catch (Exception) { }
+            
+            SyncInfo(() => DriveChanged?.Invoke(this, new DriveInformationEventArgs("Scanning finished or crashed.\nTotal scanned files: " + totalCount.ToString())));
         }
 
         private void Search(string path)
@@ -160,20 +177,35 @@ namespace Logic
                                         }
                                         file.CopyTo(catalogForCopy + file.Name, false);
                                     }
-                                    catch (System.IO.IOException) { }
-                                    Application.Current.Dispatcher.Invoke(() => WriteInformation(fullFileName));
+                                    catch (System.IO.IOException e)
+                                    {
+                                        Log(e.Message);
+                                        Log(e.Data.Values.ToString());
+                                    }
+                                    SyncInfo(() => WriteInformation(fullFileName));
                                     count++;
-                                    Application.Current.Dispatcher.Invoke(() => CountFilesChanged?.Invoke(this, new CountFilesEventArgs(count)));
+                                    SyncInfo(() => CountFilesChanged?.Invoke(this, new CountFilesEventArgs(count)));
                                 }
                             }
                             totalCount++;
-                            Application.Current.Dispatcher.Invoke(() => TotalCountFilesChanged?.Invoke(this, new CountFilesEventArgs(totalCount)));
+                            SyncInfo(() => TotalCountFilesChanged?.Invoke(this, new CountFilesEventArgs(totalCount)));
                             streamWriter.WriteLine(fullFileName);
                         }
 
                         Search(directory);
                     }
-                    catch (System.UnauthorizedAccessException) { }
+                    catch (System.UnauthorizedAccessException e)
+                    {
+                        Log(e.Message);
+                    }
+                    catch (System.NotSupportedException e)
+                    {
+                        Log(e.Message);
+                    }
+                    catch (Exception e)
+                    {
+                        Log(e.Message);
+                    }
                 }
             }
         }
@@ -184,6 +216,16 @@ namespace Logic
             {
                 cancellationToken.Cancel();
             }
+        }
+
+        private void Log(string Info)
+        {
+            logWriter.WriteLine(Info);
+        }
+
+        private void SyncInfo (Action action)
+        {
+            Application.Current.Dispatcher.Invoke(action);
         }
     }
 }

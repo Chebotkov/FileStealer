@@ -19,11 +19,11 @@ namespace FIleStealer.ViewModels
         private Stealer stealer;
         private bool isScanning = false;
 
-        public ObservableCollection<DriveInfo> AvailableDrivesList { get; set; }
-        public ObservableCollection<DriveInfo> SelectedDrivesList { get; set; }
-        public ObservableCollection<DriveInfo> AvailableRemovableDrivesList { get; set; }
-        public ObservableCollection<string> FoundedFiles { get; set; }
-        public ObservableCollection<string> ScanInfo { get; set; }
+        public ObservableCollection<DriveInfo> AvailableDrivesList { get; private set; }
+        public ObservableCollection<DriveInfo> SelectedDrivesList { get; private set; }
+        public ObservableCollection<DriveInfo> AvailableRemovableDrivesList { get; private set; }
+        public ObservableCollection<string> FoundedFiles { get; private set; }
+        public ObservableCollection<string> ScanInfo { get; private set; }
 
         public SelectedDriveVM()
         {
@@ -57,6 +57,7 @@ namespace FIleStealer.ViewModels
                               SelectedDrivesList.Add(drive);
                           }
                       }
+
                       SelectedDrive = drive;
                   }));
             }
@@ -74,6 +75,7 @@ namespace FIleStealer.ViewModels
                       {
                           SelectedDrivesList.Remove(drive);
                       }
+
                       SelectedDrive = SelectedDrivesList.FirstOrDefault();
                   },
                   (obj) => SelectedDrivesList.Count > 0));
@@ -94,7 +96,7 @@ namespace FIleStealer.ViewModels
                       TotalCountFiles = 0;
                       isScanning = true;
 
-                      stealer = new Stealer(AvailableRemovableDrive, SelectedDrivesList.ToArray(), WriteInfo);
+                      stealer = new Stealer(AvailableRemovableDrive, SelectedDrivesList.ToArray(), Manager.GetUsersExtensions(), WriteInfo);
                       stealer.DriveChanged += DriveInfoChanged;
                       stealer.CountFilesChanged += CountChanged;
                       stealer.TotalCountFilesChanged += TotalCountChanged;

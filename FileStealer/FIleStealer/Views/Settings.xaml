@@ -3,24 +3,28 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FIleStealer.Views"
+        xmlns:local="clr-namespace:FIleStealer.ViewModels"
         mc:Ignorable="d"
-        Title="Settings" Height="300" Width="300" WindowStartupLocation="CenterScreen">
+        Title="Settings" Height="400" Width="500" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+    <Window.DataContext>
+        <local:SettingsVM></local:SettingsVM>
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.7*"></RowDefinition>
             <RowDefinition Height="0.3*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.7*"></ColumnDefinition>
-            <ColumnDefinition Width="0.3*"></ColumnDefinition>
+            <ColumnDefinition Width="0.45*"></ColumnDefinition>
+            <ColumnDefinition Width="0.2*"></ColumnDefinition>
+            <ColumnDefinition Width="0.45*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Row="0" Grid.Column="0">
-            <GroupBox.Header>Set Extensions</GroupBox.Header>
+        <GroupBox Grid.Row="0" Grid.Column="2">
+            <GroupBox.Header>Setted Extensions</GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="0.7*"></RowDefinition>
+                    <RowDefinition Height="0.5*"></RowDefinition>
                     <RowDefinition Height="0.3*"></RowDefinition>
                     <RowDefinition Height="0.2*"></RowDefinition>
                     <RowDefinition Height="0.3*"></RowDefinition>
@@ -29,22 +33,34 @@
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
-                    <Label Target="{Binding ElementName=Extensions}">Available extensions</Label>
-                    <ScrollViewer Margin="0 0 0 -50">
-                        <ListBox Name="Extensions">
-                            <ListBox.ToolTip>
-                                <ToolTip>Extension must started with "."</ToolTip>
-                            </ListBox.ToolTip>
-                        </ListBox>
-                    </ScrollViewer>
-                </StackPanel>
+                <ScrollViewer Grid.Row="0" Grid.ColumnSpan="2" >
+                    <ListBox ItemsSource="{Binding Extensions}" SelectedItem="{Binding Extension}" Name="UsersExtensions">
+                        <ListBox.ToolTip>
+                            <ToolTip>Extension must started with "."</ToolTip>
+                        </ListBox.ToolTip>
+                    </ListBox>
+                </ScrollViewer>
 
-                <Button Grid.Row="1" Grid.Column="1" Margin="10,5,10,5">Remove</Button>
+                <Button Grid.Row="1" Grid.Column="1" Margin="10,5,10,5" Command="{Binding RemoveCommand}" CommandParameter="{Binding Extension}">Remove</Button>
                 <Label Grid.Row="2" Grid.ColumnSpan="2" Target="{Binding ElementName=TextblockForNewExtension}" Margin="0,0,0,26" Grid.RowSpan="2">Add new extension:</Label>
-                <TextBox Grid.Row="3" Grid.Column="0" Name="TextblockForNewExtension" Margin="0,10,0,10"></TextBox>
-                <Button Grid.Row="3" Grid.Column="1" Margin="10,5,10,5">Add</Button>
+                <TextBox Grid.Row="3" Grid.Column="0" Name="TextBoxForNewExtension" Margin="0,10,0,10" DataContext="{Binding NewExtension, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.ToolTip>
+                        <ToolTip>Extension must started with "."</ToolTip>
+                    </TextBox.ToolTip>
+                </TextBox>
+                <Button Grid.Row="3" Grid.Column="1" Margin="10,5,10,5" Command="{Binding AddCommand}" CommandParameter="{Binding ElementName=TextBoxForNewExtension, Path=Text}">Add</Button>
             </Grid>
+        </GroupBox>
+
+        <Button Grid.Row="0" Grid.Column="1" Margin="5,60,5,151" RenderTransformOrigin="0.5,1.114" Command="{Binding AddFromListCommand}">Add</Button>
+        <GroupBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 100">
+            <GroupBox.Header>
+                Common extensions
+            </GroupBox.Header>
+ 
+            <ScrollViewer >
+                <ListBox ItemsSource="{Binding CommonExtensions}" SelectedItem="{Binding SelectedCommonExtension}"></ListBox>
+            </ScrollViewer>
         </GroupBox>
     </Grid>
 </Window>

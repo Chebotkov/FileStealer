@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Logic;
 
 namespace FIleStealer.Views
 {
@@ -22,6 +23,19 @@ namespace FIleStealer.Views
         public Settings()
         {
             InitializeComponent();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string[] extensions = new string[UsersExtensions.Items.Count];
+            int i = 0;
+            foreach (var value in UsersExtensions.Items)
+            {
+                extensions[i] = value.ToString();
+                i++;
+            }
+
+            Manager.SaveUsersExtensions(extensions);
         }
     }
 }

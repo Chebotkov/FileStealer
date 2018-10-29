@@ -1,0 +1,4 @@
+.exe
+.txt
+.doc
+.jpg
