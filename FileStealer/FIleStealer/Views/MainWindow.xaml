@@ -130,6 +130,7 @@
         </GroupBox>
 
         <Button Grid.Row="4" Grid.RowSpan="2" Grid.Column="3" Margin="20,60,20,0" Height="52" VerticalAlignment="Top" Command="{Binding OpenFileCommand}" CommandParameter="{Binding ChosenFile}">Open</Button>
+        <Button Name="SetNewDriveType" Visibility="Hidden" Command="{Binding RefreshDriveTypes}"></Button>
 
         <GroupBox Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="3">
             <GroupBox.Header>Process information</GroupBox.Header>
@@ -149,6 +150,5 @@
                 </StackPanel>
             </Grid>
         </GroupBox>
-        
     </Grid>
 </Window>

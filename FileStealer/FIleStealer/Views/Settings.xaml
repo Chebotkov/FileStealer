@@ -12,7 +12,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.7*"></RowDefinition>
-            <RowDefinition Height="0.3*"></RowDefinition>
+            <RowDefinition Height="0.4*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.45*"></ColumnDefinition>
@@ -61,6 +61,20 @@
             <ScrollViewer >
                 <ListBox ItemsSource="{Binding CommonExtensions}" SelectedItem="{Binding SelectedCommonExtension}"></ListBox>
             </ScrollViewer>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Grid.Column="0" Margin="0 0 0 5">
+            <GroupBox.Header>
+                Select type of drives
+            </GroupBox.Header>
+
+            <StackPanel >
+                <RadioButton Name="RadioAll" Margin="2 3" >All drives</RadioButton>
+                <RadioButton Name="RadioReady" Margin="2 3">Ready drives</RadioButton>
+                <RadioButton Name="RadioRaU" Margin="2 3" IsChecked="True">Ready and unremovable</RadioButton>
+                <RadioButton Name="RadioRO" Margin="2 3">Removable only</RadioButton>
+                <RadioButton Name="RadioUO" Margin="2 3">Unremovable only</RadioButton>
+            </StackPanel>
         </GroupBox>
     </Grid>
 </Window>

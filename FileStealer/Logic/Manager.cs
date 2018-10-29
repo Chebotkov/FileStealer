@@ -10,6 +10,8 @@ using System.Windows;
 
 namespace Logic
 {
+    public enum DriveTypes { All, Removable, Ready, Unremovable, ReadyAndUnremovable}
+
     public static class Manager
     {
         private static string userFileName = "UsersExtensions.txt";
@@ -17,6 +19,8 @@ namespace Logic
         private static string[] extensions = { ".jpg", ".jpeg", ".bmp", ".mp3", ".wav", ".mp4", ".avi", ".exe", ".doc", ".docx", ".txt", ".rar", ".zip" };
 
         #region Properties
+        public static DriveTypes ChosenDriveType { get; set; } = DriveTypes.ReadyAndUnremovable;
+
         public static string UserFileName
         {
             get
@@ -62,6 +66,7 @@ namespace Logic
             }
         }
         #endregion
+
         static Manager()
         {
             string file = GetFilePath() + "\\" + FileName;
@@ -77,6 +82,7 @@ namespace Logic
             }
         }
 
+        #region Public methods
         public static ObservableCollection<DriveInfo> GetListOfDrivers()
         {
             return GetDrives(false);
@@ -85,26 +91,6 @@ namespace Logic
         public static ObservableCollection<DriveInfo> GetListOfRemovableDrivers()
         {
             return (GetDrives(true));
-        }
-
-        private static ObservableCollection<DriveInfo> GetDrives(bool isRemovable)
-        {
-            ObservableCollection<DriveInfo> Drives = new ObservableCollection<DriveInfo>();
-            DriveInfo[] drives = DriveInfo.GetDrives();
-
-            foreach (DriveInfo drive in drives)
-            {
-                if (drive.IsReady && drive.DriveType == DriveType.Removable && isRemovable)
-                {
-                    Drives.Add(drive);
-                }
-                else if (drive.IsReady && drive.DriveType != DriveType.Removable && !isRemovable)
-                {
-                    Drives.Add(drive);
-                }
-            }
-
-            return Drives;
         }
 
         public static void OpenFile(string pathToFile)
@@ -160,10 +146,64 @@ namespace Logic
             }
             return extensions.ToArray();
         }
+        #endregion
 
+        #region Private methods
         private static string GetFilePath()
         {
             return Directory.GetCurrentDirectory();
         }
+
+        private static ObservableCollection<DriveInfo> GetDrives(bool isRemovable)
+        {
+            ObservableCollection<DriveInfo> Drives = new ObservableCollection<DriveInfo>();
+            DriveInfo[] drives = DriveInfo.GetDrives();
+
+            foreach (DriveInfo drive in drives)
+            {
+                if (drive.IsReady && drive.DriveType == DriveType.Removable && isRemovable)
+                {
+                    Drives.Add(drive);
+                }
+                else if (!isRemovable)
+                {
+                    switch (ChosenDriveType)
+                    {
+                        case DriveTypes.All:
+                            {
+                                Drives.Add(drive);
+                                break;
+                            }
+                        case DriveTypes.Ready:
+                            {
+                                if (drive.IsReady)
+                                    Drives.Add(drive);
+                                break;
+                            }
+                        case DriveTypes.ReadyAndUnremovable:
+                            {
+                                if (!(drive.DriveType == DriveType.Removable) && drive.IsReady)
+                                    Drives.Add(drive);
+                                break;
+                            }
+                        case DriveTypes.Removable:
+                            {
+                                if (drive.DriveType == DriveType.Removable)
+                                    Drives.Add(drive);
+                                break;
+                            }
+                        case DriveTypes.Unremovable:
+                            {
+                                if (!(drive.DriveType == DriveType.Removable))
+                                    Drives.Add(drive);
+                                break;
+                            }
+                    }
+                }
+            }
+
+            return Drives;
+        }
+        #endregion
     }
 }

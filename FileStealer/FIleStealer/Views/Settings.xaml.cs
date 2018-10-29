@@ -36,6 +36,14 @@ namespace FIleStealer.Views
             }
 
             Manager.SaveUsersExtensions(extensions);
+
+            MainWindow mainWindow = Owner as MainWindow;
+
+            if (RadioAll.IsChecked.Value) mainWindow.SetDriveType(DriveTypes.All);
+            if (RadioReady.IsChecked.Value) mainWindow.SetDriveType(DriveTypes.Ready);
+            if (RadioRaU.IsChecked.Value) mainWindow.SetDriveType(DriveTypes.ReadyAndUnremovable);
+            if (RadioRO.IsChecked.Value) mainWindow.SetDriveType(DriveTypes.Removable);
+            if (RadioUO.IsChecked.Value) mainWindow.SetDriveType(DriveTypes.Unremovable);
         }
     }
 }

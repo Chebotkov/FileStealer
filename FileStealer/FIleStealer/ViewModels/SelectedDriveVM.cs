@@ -41,6 +41,7 @@ namespace FIleStealer.ViewModels
         private ButtonCommand refreshCommand;
         private ButtonCommand stopCommand;
         private ButtonCommand openFileCommand;
+        private ButtonCommand refreshDriveTypes;
 
         public ButtonCommand AddCommand
         {
@@ -158,6 +159,27 @@ namespace FIleStealer.ViewModels
                   (obj) =>
                   {
                       return !(ChosenFile is null);
+                  }
+                  ));
+            }
+        }
+
+        public ButtonCommand RefreshDriveTypes
+        {
+            get
+            {
+                return refreshDriveTypes ??
+                  (refreshDriveTypes = new ButtonCommand(obj =>
+                  {
+                      if (obj is DriveTypes)
+                      {
+                          Manager.ChosenDriveType = (DriveTypes)obj;
+                          AvailableDrivesList.Clear();
+                          foreach (var AD in Manager.GetListOfDrivers())
+                          {
+                              AvailableDrivesList.Add(AD);
+                          }
+                      }
                   }
                   ));
             }
